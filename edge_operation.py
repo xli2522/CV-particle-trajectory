@@ -20,7 +20,7 @@ import shutil
 # ********remember to change these two addresses*********** and your video file name
 savePathi = '/your/address/PycharmProjects/objectCapture/isave/'
 savePatho = '/your/address/PycharmProjects/objectCapture/osave/'
-
+videoName = 'edge_detected' + str(time) + '.mp4'
 
 class viSaver:
 
@@ -65,8 +65,6 @@ class viProcessor:
         savePathi = '/your/address/PycharmProjects/objectCapture/isave'
         savePatho = '/your/address/PycharmProjects/objectCapture/osave'
 
-
-        videoName = 'edge_detected' + str(time) + '.mp4'
         imageFolderi = savePathi
         imageFoldero = savePatho
         # imagesi = [img for img in os.listdir(imageFolderi)]
@@ -135,7 +133,7 @@ class viProcessor:
 
 class lkof_motion:
     def motion(self):
-        cap = cv2.VideoCapture('edge_detected2.mp4')
+        cap = cv2.VideoCapture(str(videoName))
         # params for ShiTomasi corner detection
         feature_params = dict( maxCorners = 100,
                                qualityLevel = 0.3,
