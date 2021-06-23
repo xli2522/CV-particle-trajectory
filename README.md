@@ -1,7 +1,7 @@
 # CV for Particle Trajectories
 Computer vision for particle trajectories.
 
-![concave0](https://github.com/xli2522/CV-particle-trajectory/blob/master/test_video/concave0.png?raw=true)
+![concave0](https://github.com/xli2522/CV-particle-trajectory/blob/master/video/concave0.png?raw=true)
 
 Libraries:
 
