@@ -73,7 +73,7 @@ class track:
                     
                     pass
 
-                ret, frame = cap.read()
+            ret, frame = cap.read()
 
         return
     
