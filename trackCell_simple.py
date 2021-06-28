@@ -7,7 +7,7 @@ from operator import index
 #CV and Math
 import cv2                      #openCV; Powerful computer vision
 import trackpy as tp            #trackPy
-#import custom_imvideo as imv   #may require unpublished custom_imvideo for batch and GPU acceleration (version dev 0.0.3 and up)
+#import custom_imvideo as imv   #may require unpublished custom_imvideo for memory management and acceleration (version dev 0.0.3 and up)
 import imvideo as imv           #imvideo; quick video construction (published version 0.0.2)
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -33,8 +33,8 @@ mpl.rc('image', cmap='gray')
 
 def main():
     '''Main testing function'''
-    #processedVideo, framesPath = track.prepareVideo('video\concave1.mp4', savePic=True, skip=5)
-    track.trackProcessedVideo('1624505972.8145204grayscale_processed.avi')
+    processedVideo, framesPath = track.prepareVideo('video\concave1.mp4', savePic=True, skip=2)
+    #track.trackProcessedVideo('1624505972.8145204grayscale_processed.avi')
     #track.identify('frames/0.png')
     #noted = track.quickFeaturePosition('frames/0.png', inspect=True)
 
@@ -42,7 +42,7 @@ def main():
 
 class track:
 
-    def prepareVideo(video, gray=False, savePic=False, sample=1000, skip=1):
+    def prepareVideo(video, gray=False, savePic=False, sample=(700, 5000), skip=1):
         '''Function reads video into grayscale frames and reduce excessive frames for tracking and analysis.
         Imput:
                 video               (string)            video file location
@@ -147,6 +147,32 @@ class track:
                 print(f'Error: {savePath} : {e.strerror}')
 
         return
+
+    def processedVideoSpecs(video):
+            '''Function finds out the specs of the processed video
+            Imput:
+                    video               (string)            video file location           
+            '''
+            cap = cv2.VideoCapture(video)       #capture video
+            ret, frame = cap.read()             #read frame information
+            if not ret:
+                raise Exception('Unable to read video... Video file broken? Check path/type...')
+
+            length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))         #total video frames
+            fps = float(cap.get(cv2.CAP_PROP_FPS))                  #video fps
+
+            height, width, channels = frame.shape                   #frame size
+            size = (width, height)
+            print('Total # frames: '+str(length))
+            print('FPS: '+str(fps))
+            print('Size: '+str(size))
+
+            print('Inspect feature selection...')
+            frame0 = frame.copy()
+            frame0 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)        # $$ FIX $$ correct grayscale parameter in cv2, remove this line
+            track.identify(frame0)                                   # identify cells of interest present in frame 0
+
+            return
     
     def trackCameraFeed(gray=False, savePic=False, skip=1):
         '''
@@ -180,9 +206,9 @@ class track:
 
         if isinstance(frame, str):
             frame = cv2.imread(str(frame), cv2.IMREAD_GRAYSCALE)
-        f = tp.locate(frame, 21, percentile=99, invert=True)
+        f = tp.locate(frame, 11, percentile=99, invert=True)
         f.head()
-        tp.annotate(f, frame, color='k')
+        tp.annotate(f, frame, color='r')
         
         return 
 
@@ -192,7 +218,7 @@ class track:
             ######## trackpy locate ########
             if isinstance(frame, str):
                 frame = cv2.imread(str(frame), cv2.IMREAD_GRAYSCALE)
-            f = tp.locate(frame, 21, percentile=99, invert=True)
+            f = tp.locate(frame, 11, percentile=99, invert=True)
 
             notedFrame = track.stealthAnnotate(f, frame)
             if inspect:
